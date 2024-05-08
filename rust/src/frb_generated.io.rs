@@ -400,10 +400,10 @@ pub extern "C" fn frbgen_lwk_dart_wire_wallet_build_asset_tx(
     that: *mut wire_cst_wallet,
     sats: u64,
     out_address: *mut wire_cst_list_prim_u_8_strict,
-    abs_fee: f32,
+    fee_rate: f32,
     asset: *mut wire_cst_list_prim_u_8_strict,
 ) {
-    wire_wallet_build_asset_tx_impl(port_, that, sats, out_address, abs_fee, asset)
+    wire_wallet_build_asset_tx_impl(port_, that, sats, out_address, fee_rate, asset)
 }
 
 #[no_mangle]
@@ -412,9 +412,9 @@ pub extern "C" fn frbgen_lwk_dart_wire_wallet_build_lbtc_tx(
     that: *mut wire_cst_wallet,
     sats: u64,
     out_address: *mut wire_cst_list_prim_u_8_strict,
-    abs_fee: f32,
+    fee_rate: f32,
 ) {
-    wire_wallet_build_lbtc_tx_impl(port_, that, sats, out_address, abs_fee)
+    wire_wallet_build_lbtc_tx_impl(port_, that, sats, out_address, fee_rate)
 }
 
 #[no_mangle]
@@ -464,6 +464,11 @@ pub extern "C" fn frbgen_lwk_dart_wire_wallet_sync(
 #[no_mangle]
 pub extern "C" fn frbgen_lwk_dart_wire_wallet_txs(port_: i64, that: *mut wire_cst_wallet) {
     wire_wallet_txs_impl(port_, that)
+}
+
+#[no_mangle]
+pub extern "C" fn frbgen_lwk_dart_wire_wallet_utxos(port_: i64, that: *mut wire_cst_wallet) {
+    wire_wallet_utxos_impl(port_, that)
 }
 
 #[no_mangle]

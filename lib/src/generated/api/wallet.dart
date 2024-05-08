@@ -57,27 +57,27 @@ class Wallet {
   Future<String> buildAssetTx(
           {required int sats,
           required String outAddress,
-          required double absFee,
+          required double feeRate,
           required String asset,
           dynamic hint}) =>
       LwkCore.instance.api.walletBuildAssetTx(
           that: this,
           sats: sats,
           outAddress: outAddress,
-          absFee: absFee,
+          feeRate: feeRate,
           asset: asset,
           hint: hint);
 
   Future<String> buildLbtcTx(
           {required int sats,
           required String outAddress,
-          required double absFee,
+          required double feeRate,
           dynamic hint}) =>
       LwkCore.instance.api.walletBuildLbtcTx(
           that: this,
           sats: sats,
           outAddress: outAddress,
-          absFee: absFee,
+          feeRate: feeRate,
           hint: hint);
 
   Future<PsetAmounts> decodeTx({required String pset, dynamic hint}) =>
@@ -112,6 +112,9 @@ class Wallet {
 
   Future<List<Tx>> txs({dynamic hint}) =>
       LwkCore.instance.api.walletTxs(that: this, hint: hint);
+
+  Future<List<TxOut>> utxos({dynamic hint}) =>
+      LwkCore.instance.api.walletUtxos(that: this, hint: hint);
 
   @override
   int get hashCode => inner.hashCode;

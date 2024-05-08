@@ -718,7 +718,7 @@ class LwkCoreWire implements BaseWire {
     ffi.Pointer<wire_cst_wallet> that,
     int sats,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> out_address,
-    double abs_fee,
+    double fee_rate,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> asset,
   ) {
     return _wire_wallet_build_asset_tx(
@@ -726,7 +726,7 @@ class LwkCoreWire implements BaseWire {
       that,
       sats,
       out_address,
-      abs_fee,
+      fee_rate,
       asset,
     );
   }
@@ -756,14 +756,14 @@ class LwkCoreWire implements BaseWire {
     ffi.Pointer<wire_cst_wallet> that,
     int sats,
     ffi.Pointer<wire_cst_list_prim_u_8_strict> out_address,
-    double abs_fee,
+    double fee_rate,
   ) {
     return _wire_wallet_build_lbtc_tx(
       port_,
       that,
       sats,
       out_address,
-      abs_fee,
+      fee_rate,
     );
   }
 
@@ -913,6 +913,23 @@ class LwkCoreWire implements BaseWire {
               ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_wallet>)>>(
       'frbgen_lwk_dart_wire_wallet_txs');
   late final _wire_wallet_txs = _wire_wallet_txsPtr
+      .asFunction<void Function(int, ffi.Pointer<wire_cst_wallet>)>();
+
+  void wire_wallet_utxos(
+    int port_,
+    ffi.Pointer<wire_cst_wallet> that,
+  ) {
+    return _wire_wallet_utxos(
+      port_,
+      that,
+    );
+  }
+
+  late final _wire_wallet_utxosPtr = _lookup<
+          ffi.NativeFunction<
+              ffi.Void Function(ffi.Int64, ffi.Pointer<wire_cst_wallet>)>>(
+      'frbgen_lwk_dart_wire_wallet_utxos');
+  late final _wire_wallet_utxos = _wire_wallet_utxosPtr
       .asFunction<void Function(int, ffi.Pointer<wire_cst_wallet>)>();
 
   void rust_arc_increment_strong_count_RustOpaque_Mutexlwk_wolletWollet(
