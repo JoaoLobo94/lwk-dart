@@ -135,8 +135,18 @@ impl Api {
     ) -> anyhow::Result<Vec<u8>, LwkError> {
         Wallet::retrieve_wallet(wallet_id)?.sign_tx(network, pset, mnemonic)
     }
+
     pub fn utxos(wallet_id: String) -> anyhow::Result<Vec<Tx>, LwkError> {
         Wallet::retrieve_wallet(wallet_id)?.utxos()
+    }
+
+    pub fn signed_pset_with_extra_details(
+        wallet_id: String,
+        pset: String,
+        network: Network,
+        mnemonic: String,
+    ) -> anyhow::Result<String, LwkError> {
+        Wallet::retrieve_wallet(wallet_id)?.signed_pset_with_extra_details(network, pset, mnemonic)
     }
 }
 

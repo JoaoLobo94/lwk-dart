@@ -324,7 +324,8 @@ abstract class LwkCoreApiImplPlatform extends BaseApiImpl<LwkCoreWire> {
       cst_encode_String(raw.txid),
       cst_encode_list_tx_out(raw.outputs),
       cst_encode_list_tx_out(raw.inputs),
-      cst_encode_u_64(raw.fee)
+      cst_encode_u_64(raw.fee),
+      cst_encode_u_32(raw.height)
     ];
   }
 
@@ -543,6 +544,11 @@ class LwkCoreWire implements BaseWire {
           int network, String pset, String mnemonic) =>
       wasmModule.wire_wallet_sign_tx(port_, that, network, pset, mnemonic);
 
+  void wire_wallet_signed_pset_with_extra_details(NativePortType port_,
+          List<dynamic> that, int network, String pset, String mnemonic) =>
+      wasmModule.wire_wallet_signed_pset_with_extra_details(
+          port_, that, network, pset, mnemonic);
+
   void wire_wallet_sync(
           NativePortType port_, List<dynamic> that, String electrum_url) =>
       wasmModule.wire_wallet_sync(port_, that, electrum_url);
@@ -623,6 +629,9 @@ class LwkCoreWasmModule implements WasmModule {
 
   external void wire_wallet_sign_tx(NativePortType port_, List<dynamic> that,
       int network, String pset, String mnemonic);
+
+  external void wire_wallet_signed_pset_with_extra_details(NativePortType port_,
+      List<dynamic> that, int network, String pset, String mnemonic);
 
   external void wire_wallet_sync(
       NativePortType port_, List<dynamic> that, String electrum_url);

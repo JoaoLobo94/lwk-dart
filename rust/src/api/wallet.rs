@@ -1,8 +1,8 @@
 use elements::pset::serialize::Deserialize;
 use elements::pset::serialize::Serialize;
 use elements::pset::PartiallySignedTransaction;
-use elements::Transaction;
 use elements::Txid;
+use elements::{OutPoint, Transaction};
 use lwk_common::Signer;
 use lwk_signer::SwSigner;
 // use lwk_wollet::elements_miniscript::descriptor;
@@ -51,24 +51,15 @@ impl Wallet {
         network: Network,
         dbpath: String,
         descriptor: Descriptor,
+        // electrum_url: String,
     ) -> anyhow::Result<Wallet, LwkError> {
         let desc_str = descriptor.ct_descriptor;
         let descriptor = WolletDescriptor::from_str(&desc_str)?;
-        let db = FsPersister::new(dbpath, network.into(), &descriptor)?;
-        println!("---rust---Db Loaded");
-        println!("---rust---Initializing Wallet");
-        let wollet = Wollet::new(network.into(), db, descriptor)?;
-
-        println!("---rust---Wallet Ready. Creating Wallet Struct.");
-
+        // let db = FsPersister::new(dbpath.clone(), network.into(), &descriptor)?;
+        let wollet = Wollet::with_fs_persist(network.into(), descriptor, dbpath.clone())?;
         let opaque = RustOpaque::new(Mutex::new(wollet));
-
-        println!("---rust---Created Opaque Mutex Wallet");
-
         let wallet = Wallet { inner: opaque };
-
-        println!("---rust---Wallet Struct Created");
-
+        // wallet.sync(electrum_url)?;
         Ok(wallet)
     }
     pub fn sync(&self, electrum_url: String) -> anyhow::Result<(), LwkError> {
@@ -136,7 +127,10 @@ impl Wallet {
         let wallet = self.get_wallet()?;
         let tx_builder = wallet.tx_builder();
         let address = elements::Address::from_str(&out_address)?;
-        let pset = tx_builder.add_lbtc_recipient(&address, sats)?.fee_rate(Some(fee_rate)).finish()?;
+        let pset = tx_builder
+            .add_lbtc_recipient(&address, sats)?
+            .fee_rate(Some(fee_rate))
+            .finish()?;
         Ok(pset.to_string())
     }
 
@@ -151,7 +145,10 @@ impl Wallet {
         let tx_builder = wallet.tx_builder();
         let address = elements::Address::from_str(&out_address)?;
         let asset = elements::AssetId::from_str(&asset)?;
-        let pset = tx_builder.add_recipient(&address, sats, asset)?.fee_rate(Some(fee_rate)).finish()?;
+        let pset = tx_builder
+            .add_recipient(&address, sats, asset)?
+            .fee_rate(Some(fee_rate))
+            .finish()?;
         Ok(pset.to_string())
     }
 
@@ -159,6 +156,45 @@ impl Wallet {
         let mut pset = PartiallySignedTransaction::from_str(&pset)?;
         let pset_details = self.get_wallet()?.get_details(&mut pset)?;
         Ok(PsetAmounts::from(pset_details.balance))
+    }
+
+    fn get_txout(&self, outpoint: &OutPoint) -> Result<elements::TxOut, LwkError> {
+        let wallet_transaction = self.get_wallet()?.transaction(&outpoint.txid)?;
+        let transaction = wallet_transaction.unwrap();
+        let txout = transaction
+            .tx
+            .output
+            .get(outpoint.vout as usize)
+            .ok_or(LwkError {
+                msg: "Could not find txout".to_string(),
+            })?;
+        Ok(txout.clone())
+    }
+
+    pub fn signed_pset_with_extra_details(
+        &self,
+        network: Network,
+        pset: String,
+        mnemonic: String,
+    ) -> anyhow::Result<String, LwkError> {
+        let is_mainnet = network == Network::Testnet;
+        let signer: SwSigner = SwSigner::new(&mnemonic, is_mainnet)?;
+        let mut pset = PartiallySignedTransaction::from_str(&pset)?;
+
+        for input in pset.inputs_mut().iter_mut() {
+            let res = self.get_txout(&elements::OutPoint {
+                txid: input.previous_txid,
+                vout: input.previous_output_index,
+            });
+            if let Ok(mut txout) = res {
+                input.in_utxo_rangeproof = txout.witness.rangeproof.take();
+                input.witness_utxo = Some(txout);
+            }
+        }
+        self.get_wallet()?.add_details(&mut pset)?;
+
+        let _ = signer.sign(&mut pset);
+        Ok(pset.to_string())
     }
 
     pub fn sign_tx(

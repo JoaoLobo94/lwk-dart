@@ -15,7 +15,7 @@ void main() {
       const outAmount = 10000;
       const outAddress =
           "tlq1qqt4hjkl6sug5ld89sdaekt7ew04va8w7c63adw07l33vcx86vpj5th3w7rkdnckmfpraufnnrfcep4thqt6024phuav99djeu";
-      const feeRate = 300.0;
+      const feeRate = 1000.0;
       final descriptor = await Descriptor.newConfidential(
         network: network,
         mnemonic: mnemonic,
@@ -49,6 +49,9 @@ void main() {
       print('Post Balance: ${postBalance}');
       final getUnspendUtxos = await wallet.utxos();
       print('Unspent Utxos: $getUnspendUtxos');
+      final sign_pset_string = await wallet.signedPsetWithExtraDetails(
+          network: network, pset: pset, mnemonic: mnemonic);
+      print('Signed Tx String: $sign_pset_string');
     });
   });
 }
