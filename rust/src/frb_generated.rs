@@ -371,6 +371,37 @@ fn wire_wallet_sign_tx_impl(
         },
     )
 }
+fn wire_wallet_signed_pset_with_extra_details_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    that: impl CstDecode<crate::api::wallet::Wallet>,
+    network: impl CstDecode<crate::api::types::Network>,
+    pset: impl CstDecode<String>,
+    mnemonic: impl CstDecode<String>,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::DcoCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "wallet_signed_pset_with_extra_details",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let api_that = that.cst_decode();
+            let api_network = network.cst_decode();
+            let api_pset = pset.cst_decode();
+            let api_mnemonic = mnemonic.cst_decode();
+            move |context| {
+                transform_result_dco((move || {
+                    crate::api::wallet::Wallet::signed_pset_with_extra_details(
+                        &api_that,
+                        api_network,
+                        api_pset,
+                        api_mnemonic,
+                    )
+                })())
+            }
+        },
+    )
+}
 fn wire_wallet_sync_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<crate::api::wallet::Wallet>,

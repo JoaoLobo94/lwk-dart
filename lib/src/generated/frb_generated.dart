@@ -121,6 +121,13 @@ abstract class LwkCoreApi extends BaseApi {
       required String mnemonic,
       dynamic hint});
 
+  Future<String> walletSignedPsetWithExtraDetails(
+      {required Wallet that,
+      required Network network,
+      required String pset,
+      required String mnemonic,
+      dynamic hint});
+
   Future<void> walletSync(
       {required Wallet that, required String electrumUrl, dynamic hint});
 
@@ -513,6 +520,39 @@ class LwkCoreApiImpl extends LwkCoreApiImplPlatform implements LwkCoreApi {
 
   TaskConstMeta get kWalletSignTxConstMeta => const TaskConstMeta(
         debugName: "wallet_sign_tx",
+        argNames: ["that", "network", "pset", "mnemonic"],
+      );
+
+  @override
+  Future<String> walletSignedPsetWithExtraDetails(
+      {required Wallet that,
+      required Network network,
+      required String pset,
+      required String mnemonic,
+      dynamic hint}) {
+    return handler.executeNormal(NormalTask(
+      callFfi: (port_) {
+        var arg0 = cst_encode_box_autoadd_wallet(that);
+        var arg1 = cst_encode_network(network);
+        var arg2 = cst_encode_String(pset);
+        var arg3 = cst_encode_String(mnemonic);
+        return wire.wire_wallet_signed_pset_with_extra_details(
+            port_, arg0, arg1, arg2, arg3);
+      },
+      codec: DcoCodec(
+        decodeSuccessData: dco_decode_String,
+        decodeErrorData: dco_decode_lwk_error,
+      ),
+      constMeta: kWalletSignedPsetWithExtraDetailsConstMeta,
+      argValues: [that, network, pset, mnemonic],
+      apiImpl: this,
+      hint: hint,
+    ));
+  }
+
+  TaskConstMeta get kWalletSignedPsetWithExtraDetailsConstMeta =>
+      const TaskConstMeta(
+        debugName: "wallet_signed_pset_with_extra_details",
         argNames: ["that", "network", "pset", "mnemonic"],
       );
 

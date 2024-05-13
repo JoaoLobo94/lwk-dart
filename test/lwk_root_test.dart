@@ -24,7 +24,6 @@ void main() {
         network: network,
         dbpath: dbPath,
         descriptor: descriptor,
-        electrumUrl: electrumUrl,
       );
       await wallet.sync(electrumUrl: electrumUrl);
       final address = await wallet.addressLastUnused();
@@ -50,6 +49,9 @@ void main() {
       print('Post Balance: ${postBalance}');
       final getUnspendUtxos = await wallet.utxos();
       print('Unspent Utxos: $getUnspendUtxos');
+      final sign_pset_string = await wallet.signedPsetWithExtraDetails(
+          network: network, pset: pset, mnemonic: mnemonic);
+      print('Signed Tx String: $sign_pset_string');
     });
   });
 }

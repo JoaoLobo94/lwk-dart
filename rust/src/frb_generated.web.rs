@@ -489,6 +489,17 @@ pub fn wire_wallet_sign_tx(
 }
 
 #[wasm_bindgen]
+pub fn wire_wallet_signed_pset_with_extra_details(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
+    network: i32,
+    pset: String,
+    mnemonic: String,
+) {
+    wire_wallet_signed_pset_with_extra_details_impl(port_, that, network, pset, mnemonic)
+}
+
+#[wasm_bindgen]
 pub fn wire_wallet_sync(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,

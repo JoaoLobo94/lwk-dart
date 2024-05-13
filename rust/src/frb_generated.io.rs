@@ -455,6 +455,17 @@ pub extern "C" fn frbgen_lwk_dart_wire_wallet_sign_tx(
 }
 
 #[no_mangle]
+pub extern "C" fn frbgen_lwk_dart_wire_wallet_signed_pset_with_extra_details(
+    port_: i64,
+    that: *mut wire_cst_wallet,
+    network: i32,
+    pset: *mut wire_cst_list_prim_u_8_strict,
+    mnemonic: *mut wire_cst_list_prim_u_8_strict,
+) {
+    wire_wallet_signed_pset_with_extra_details_impl(port_, that, network, pset, mnemonic)
+}
+
+#[no_mangle]
 pub extern "C" fn frbgen_lwk_dart_wire_wallet_sync(
     port_: i64,
     that: *mut wire_cst_wallet,
