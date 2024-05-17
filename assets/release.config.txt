@@ -1,2 +1,2 @@
 TAG_VERSION=0.1.4
-REPOSITORY_URL=https://github.com/SatoshiPortal/lwk-dart/releases/download
+REPOSITORY_URL=https://github.com/JoaoLobo94/satsails-lwk-dart/releases/download
