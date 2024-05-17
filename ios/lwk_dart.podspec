@@ -63,7 +63,7 @@ read_key_value_pairs = lambda do |file_path|
     # # builds of apps using this FFI plugin. Podspec does not support relative
     # # paths, so Classes contains a forwarder C file that relatively imports
     # # `../src/*` so that the C sources can be shared among all target platforms.
-    # s.source           = { :path => '.' }
+    s.source = { :git => 'https://github.com/JoaoLobo94/satsails-lwk-dart.git', :tag => '0.4.0' }
     # s.source_files = 'Classes/**/*'
     # s.public_header_files = 'Classes**/*.h'
     # s.dependency 'Flutter'
